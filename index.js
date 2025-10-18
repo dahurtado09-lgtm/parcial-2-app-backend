@@ -1,66 +1,31 @@
-// index.js (modo debug)
-console.log("Mi primera app en Express - DEBUG");
-require("dotenv").config();
+//Activar dotenv para leer el archivo .env
+require("dotenv").config(); //activa la lectura del archivo .env
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const express = require("express");
-
-// IMPORTAR datos -> ajustar ruta si tu carpeta se llama Data o data
-const users = require("./Data/users"); // <-- si tu carpeta es "Data" cambia a "./Data/users"
 const app = express();
-const PORT = process.env.PORT || 3000;
 
+// Permite que Express entienda archivos JSON
 app.use(express.json());
 
-// CORS manual (como el profe)
+//Cors, dependencia que le dice al servidor que admitimos solicitudes tipo GET, PUT, POST, PATCH Y DELETE
 const cors = require("cors");
 app.use(cors());
 
+//Importacion de rutas creadas
+const mainRouter = require('./src/routes/main.router');
+const usuariosRouter = require("./src/routes/usuarios.router");
 
-// --- DEBUG: mostrar información de importación ---
-console.log("DEBUG: users importado ->", typeof users);
-console.log("DEBUG: users es array? ->", Array.isArray(users));
-console.log("DEBUG: users.length ->", Array.isArray(users) ? users.length : "N/A");
-if (Array.isArray(users)) console.log("DEBUG: primeros usuarios ->", users.slice(0,3));
+//Activacion de rutas
+app.use(mainRouter);
+app.use(usuariosRouter);
 
-// Ruta raíz
-app.get("/", (req, res) => {
-  res.json({
-    message: "¡Hola! Express funcionando (DEBUG)",
-    timestamp: new Date().toISOString(),
-    status: "success",
-  });
-});
+//Configuracion del puerto o que use uno por defecto 
+const PORT = process.env.PORT || 3000;
 
-// Ping simple
-app.get("/_ping", (req, res) => res.json({ ok: true }));
-
-// Ruta todos usuarios (estructura objetivo)
-app.get("/users", (req, res) => {
-  console.log("DEBUG: GET /users called");
-  res.json({ success: true, users: users });
-});
-
-// Ruta usuario por id (debug)
-app.get("/users/:id", (req, res) => {
-  console.log("DEBUG: GET /users/:id called with params:", req.params);
-  const { id } = req.params;
-  const user = Array.isArray(users) ? users.find(u => String(u.id) === String(id)) : null;
-
-  if (!user) {
-    console.log(`DEBUG: user id=${id} not found`);
-    return res.status(404).json({
-      message: `user for id = ${id} not found`,
-      success: false
-    });
-  }
-
-  console.log(`DEBUG: user id=${id} found`);
-  res.json({
-    message: "user found",
-    success: true,
-    user: user
-  });
-});
-
+//Inicia el servidor para que escuche.
 app.listen(PORT, () => {
   console.log(`🚀 DEBUG Servidor en http://localhost:${PORT}`);
 });
+
+
+
