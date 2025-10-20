@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-// 🧠 Variable para guardar usuarios en memoria (simula base de datos)
+// Variable para guardar usuarios en memoria (simula base de datos)
 let usersData = [];
 
-// ✅ 1. Obtener todos los usuarios
+// Obtener todos los usuarios
 router.get("/users", async (req, res) => {
   try {
     const response = await fetch("https://fakestoreapi.com/users");
@@ -34,7 +34,7 @@ router.get("/users", async (req, res) => {
   }
 });
 
-// ✅ 2. Buscar usuario por ID
+// 2. Buscar usuario por ID
 router.get("/users/:id", async (req, res) => {
   const id = parseInt(req.params.id);
 
@@ -53,7 +53,7 @@ router.get("/users/:id", async (req, res) => {
     }));
   }
 
-  // Buscamos el usuario
+  // Buscar el usuario
   const userFound = usersData.find(u => u.id === id);
 
   if (userFound) {
@@ -70,7 +70,7 @@ router.get("/users/:id", async (req, res) => {
   }
 });
 
-// ✅ 3. Crear nuevo usuario (POST)
+// Crear nuevo usuario (POST)
 router.post("/users", (req, res) => {
   const { name, phone, email, address, age, photoUrl } = req.body;
 
